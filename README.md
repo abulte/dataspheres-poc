@@ -1,25 +1,74 @@
 # dataspheres-poc
 
-This template should help get you started developing with Vue 3 in Vite.
+Goal: experiment with a multisite architecture in vuejs, i.e. a common code base that can serve multiple sites with some common features/components and some custom ones.
 
-## Recommended IDE Setup
+This could be used in https://github.com/ecolabdata/ecospheres-front/ and real life examples are taken from there.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+This project includes:
+- a `VITE_SITE_ID` env var that defines which site should be built
+- the config files from https://github.com/ecolabdata/ecospheres-front/tree/main/configs and the same mechanism to load the correct config file depending on `VITE_SITE_ID`
+- `src/sites/{site_id}/` directories with custom configuration and components
 
-## Type Support for `.vue` Imports in TS
+Each site should provide its own routing (can be empty) that extends the default one in `src/sites/{site_id}/routes.ts`.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+For example, if Ecospheres wants to expose a custom `organizations` page that is not included by default:
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+```javascript
+export const routes = [
+  {
+    path: '/organizations',
+    name: 'organizations',
+    component: () => import('./views/OrganizationsView.vue'),
+    meta: { showInNav: true }
+  },
+]
+```
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+The `showInNav` attribute is used to generate the header navigation. The `meta` attr of the route could be used for multiple configuration use cases like this.
 
-## Customize configuration
+This per-site routing combined with [slots](https://vuejs.org/guide/components/slots.html) in default templates opens up other possibilities.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+For example, the default `HomeView` exposes a `sub-hero` slot. With custom routing, MeteoFrance can extend the `HomeView` with its own template, `MFHomeView`, filling the `sub-hero` slot.
+
+```javascript
+import MFHomeView from "./views/MFHomeView.vue"
+
+export const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: MFHomeView,
+    meta: { showInNav: true }
+  },
+]
+```
+
+```vue
+<script setup lang="ts">
+import HomeView from "@/views/HomeView.vue"
+</script>
+
+<template>
+  <HomeView>
+    <template #sub-hero>
+      METEO FRANCE A DES CHOSES A DIRE SUR LA HOME PAGE
+    </template>
+  </HomeView>
+</template>
+```
+
+## TODO
+
+- [ ] fix TS
+- [ ] try to optimize bundle depending on which site is being built
+- [ ] see if multiple repos can be used instead of a mono-repo
+- [ ] maybe move configs to `src/sites`
+
+## Deployments
+
+Example deployments with different site ids:
+- `VITE_SITE_ID=ecospheres`: https://dataspheres-es.netlify.app/
+- `VITE_SITE_ID=meteo-france`: https://dataspheres-mf.netlify.app/
 
 ## Project Setup
 

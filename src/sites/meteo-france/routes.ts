@@ -1,10 +1,10 @@
-import HomeView from "./views/HomeView.vue"
+import MFHomeView from "./views/MFHomeView.vue"
 
 export const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
+    component: MFHomeView,
     meta: { showInNav: true }
   },
 ]
