@@ -13,7 +13,16 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       ViteYaml(),
-      dynamicImport()
+      dynamicImport({
+        onFiles(files, id) {
+          // include only the current site routes definition in the bundle
+          if (id.includes('/src/router/index.ts')) {
+            return files.filter((routeFile) =>
+              routeFile.includes(`sites/${env.VITE_SITE_ID}/routes.ts`)
+            )
+          }
+        }
+      })
     ],
     resolve: {
       alias: {

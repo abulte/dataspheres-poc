@@ -5,7 +5,7 @@ import HomeView from "@/views/HomeView.vue"
 <template>
   <HomeView>
     <template #sub-hero>
-      METEO FRANCE A DES CHOSES A DIRE SUR LA HOME PAGE
+      ONLY_METEO FRANCE A DES CHOSES A DIRE SUR LA HOME PAGE
     </template>
   </HomeView>
 </template>

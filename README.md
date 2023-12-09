@@ -57,10 +57,12 @@ import HomeView from "@/views/HomeView.vue"
 </template>
 ```
 
+The bundle is tweaked with `vite-plugin-dynamic-import` so that only the current site routes definition will be included, and thus only the components for the current site if they're imported from the routes file (as they should be).
+
 ## TODO
 
+- [x] try to optimize bundle depending on which site is being built
 - [ ] fix TS
-- [ ] try to optimize bundle depending on which site is being built
 - [ ] see if multiple repos can be used instead of a mono-repo
 - [ ] maybe move configs to `src/sites`
 
